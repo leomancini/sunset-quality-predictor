@@ -1,7 +1,7 @@
 <?php
     require('../../../config.php');
 
-    $inputJSON = trim(file_get_contents("php://input"));
+    $inputJSON = trim(file_get_contents('php://input'));
     $input = json_decode($inputJSON, true);
 
     $airtableAuthToken = $SECRETS['AIRTABLE_API_KEY'];
