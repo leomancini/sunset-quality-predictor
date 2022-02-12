@@ -1,5 +1,6 @@
 <?php
-    require('getSunsetTime.php');
+    require('config.php');
+    require('functions/getSunsetTime.php');
 
     $begin = new DateTime('2021-12-16');
     $now = new DateTime(); // Today

@@ -6,7 +6,7 @@
             $filename = "../".$CONFIG['IMG_PATH']."/$minuteFormatted.jpg";
 
             if ($options['CHECK_EXISTS']) {
-                if (file_exists(dirname(__FILE__).'/'.$filename)) {
+                if (file_exists(dirname(__FILE__).'/../'.$filename)) {
                     array_push($timesFromMidnightToSunset, $filename);
                 }
             } else {

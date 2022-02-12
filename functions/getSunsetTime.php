@@ -1,6 +1,4 @@
 <?php
-    require('config.php');
-
     function getSunsetTime($date) {
         global $CONFIG;
         
@@ -17,17 +15,5 @@
         $dateSunsetTimeET = new DateTime($dateSunsetTimeUTC->format('Y-m-d')." ".$dateSunsetTimeUTC->format('H:i'));
 
         return $dateSunsetTimeET;
-    }
-
-    // DEBUG
-    if ($_GET['print'] === 'true') {
-        $dateInput = $_GET['date'];
-        $date = new DateTime($dateInput);
-
-        echo '<pre>'.json_encode(Array(
-            "date" => $date->format('Y-m-d'),
-            "sunsetTime" => getSunsetTime($date)->format("H-i"),
-            "sunsetDateTime" => getSunsetTime($date)->format("Y-m-d-H-i")
-        ));
     }
 ?>

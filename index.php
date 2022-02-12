@@ -107,7 +107,8 @@
                         'index.php',
                         '.DS_Store',
                         '.git',
-                        '.gitignore'
+                        '.gitignore',
+                        'secrets.php'
                     ];
 
                     foreach ($files as &$file) {

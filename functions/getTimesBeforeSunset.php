@@ -1,15 +1,16 @@
 <?php
     require('config.php');
-    require('getSunsetTime.php');
-    require('addToArray.php');
-
-    $dateInput = $_GET['date'];
-    $date = new DateTime($dateInput);
+    require('functions/getSunsetTime.php');
+    require('functions/addToArray.php');
 
     function getTimesFromMidnightToSunset($date, $options) {
         global $CONFIG;
 
-        $interval = '15 minutes';
+        if ($options['INTERVAL']) {
+            $interval = $options['INTERVAL'];
+        } else {
+            $interval = '15 minutes';
+        }
 
         $sunsetTime = getSunsetTime($date);
         $midnightTime = new DateTime($date->format('Y-m-d')." 00:00");
@@ -42,15 +43,5 @@
         }
 
         return $timesFromMidnightToSunset;
-    }
-
-    // DEBUG
-    if ($_GET['debug'] === 'true') {
-        echo '<pre>'.json_encode(Array(
-            "date" => $date->format('Y-m-d'),
-            "sunsetTime" => getSunsetTime($date)->format("H-i"),
-            "sunsetDateTime" => getSunsetTime($date)->format("Y-m-d-H-i"),
-            "timesFromMidnightToSunset" => getTimesFromMidnightToSunset($date, ['FILENAME' => false, 'CHECK_EXISTS' => true])
-        ));
     }
 ?>

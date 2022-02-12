@@ -3,7 +3,7 @@
     function generateCompositeGridImage($srcImagePaths) {
         $gridSize = 8;
         $scale = 0.3;
-        
+
         $tileWidth = 1920 / (1 / $scale);
         $tileHeight = 1080 / (1 / $scale);
         
@@ -14,17 +14,8 @@
         $bgColor = imagecolorallocate($mapImage, 0, 0, 0);
         imagefill($mapImage, 0, 0, $bgColor);
     
-        function indexToCoords($index) {
-            global $tileWidth, $tileHeight, $gridSize;
-        
-            $x = ($index % $gridSize) * $tileWidth;
-            $y = floor($index / $gridSize) * $tileHeight;
-    
-            return Array($x, $y);
-        }
-        
         foreach ($srcImagePaths as $index => $srcImagePath) {
-            list ($x, $y) = indexToCoords($index);
+            list ($x, $y) = indexToCoords($index, $tileWidth, $tileHeight, $gridSize, $scale);
             $tileImg = imagecreatefromjpeg($srcImagePath);
         
             imagecopyresized($mapImage, $tileImg, $x, $y, 0, 0, $tileWidth, $tileHeight, 1920, 1080);
@@ -36,8 +27,13 @@
         $thumbImage = imagecreatetruecolor($thumbWidth, $thumbHeight);
         imagecopyresampled($thumbImage, $mapImage, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $mapWidth, $mapHeight);
         
-        header('Content-type: image/jpeg');
+        imagejpeg($thumbImage);
+    }
+    
+    function indexToCoords($index, $tileWidth, $tileHeight, $gridSize, $scale) {
+        $x = ($index % $gridSize) * $tileWidth;
+        $y = floor($index / $gridSize) * $tileHeight;
 
-        return imagejpeg($thumbImage);
+        return Array($x, $y);
     }
 ?>
