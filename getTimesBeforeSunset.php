@@ -53,6 +53,4 @@
             "timesFromMidnightToSunset" => getTimesFromMidnightToSunset($date, ['FILENAME' => false, 'CHECK_EXISTS' => true])
         ));
     }
-
-    // TODO: Create composite image of times 15 mins before/after sunset
 ?>
