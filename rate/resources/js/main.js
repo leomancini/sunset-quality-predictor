@@ -16,7 +16,7 @@ async function getInfoForDate(options) {
 async function load() {
     observeImagesContainerHeight();
 
-    window.availableDates = await getAvailableDates();
+    window.data.availableDates = await getAvailableDates();
     
     hideCurrentImage();
     await showImagesForRandomDate();
@@ -26,10 +26,10 @@ async function load() {
 }
 
 async function showImagesForRandomDate() {
-    if (window.availableDates.length > 0) {
-        let randomAvailableDate = window.availableDates[Math.floor(Math.random() * window.availableDates.length)];
+    if (window.data.availableDates.length > 0) {
+        let randomAvailableDate = window.data.availableDates[Math.floor(Math.random() * window.data.availableDates.length)];
     
-        window.availableDates = window.availableDates.filter(function(value) {
+        window.data.availableDates = window.data.availableDates.filter(function(value) {
             return value !== randomAvailableDate;
         });
     
@@ -74,7 +74,7 @@ async function showImagesForRandomDate() {
 
 function cleanTimestamp(timestamp) {
     // Clean up timestamp so it's read correctly in all browsers, mostly for iOS Safari
-    const inputTimestampComponents = window.currentImage.sunsetTimestamp.split(/[-T.]/);
+    const inputTimestampComponents = window.data.currentImage.sunsetTimestamp.split(/[-T.]/);
     const dateObject = new Date(inputTimestampComponents.slice(0, 3).join('/') + ' ' + inputTimestampComponents[3]);
     const ISOString = dateObject.toISOString();
 
@@ -85,8 +85,8 @@ function cleanTimestamp(timestamp) {
 }
 
 function showImagesForDate(data) {
-    window.currentImage = data.info;
-    window.cleanedSunsetTimestamp = cleanTimestamp(window.currentImage.sunsetTimestamp);
+    window.data.currentImage = data.info;
+    window.data.cleanedSunsetTimestamp = cleanTimestamp(window.data.currentImage.sunsetTimestamp);
 
     const imagesElement = document.querySelector(`#${data.displayType}Images`);
 
@@ -121,14 +121,14 @@ function showImagesForDate(data) {
         imagesLoadedCount++;
 
         if (imagesLoadedCount === imagesElement.childNodes.length) {
-            if (window.state.displayType === 'animated' && data.displayType === 'animated') {
+            if (window.data.displayType === 'animated' && data.displayType === 'animated') {
                 startImageAnimation({
                     speed: 50,
                     imagesElement
                 });
 
                 showCurrentImage(imagesElement);
-            } else if (window.state.displayType === 'grid' && data.displayType === 'grid') {
+            } else if (window.data.displayType === 'grid' && data.displayType === 'grid') {
                 showCurrentImage(imagesElement);
             }
         }
@@ -166,15 +166,15 @@ function hideCurrentImage() {
 }
 
 function updateDateLabel() {
-    const date = window.cleanedSunsetTimestamp.dateObject.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const date = window.data.cleanedSunsetTimestamp.dateObject.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
     dateLabelElement.classList.add('visible');
     dateLabelElement.innerText = date;;
 }
 
 function startImageAnimation(options) {
-    if (window.intervalID) {
-        clearInterval(intervalID);
+    if (window.data.intervalID) {
+        clearInterval(window.data.intervalID);
     }
 
     let visibleImageIndex = 0;
@@ -200,7 +200,7 @@ function startImageAnimation(options) {
         }
     }
 
-    window.intervalID = setInterval(loop, options.speed);
+    window.data.intervalID = setInterval(loop, options.speed);
 };
 
 function handleOptionSwitcher() {
@@ -224,14 +224,14 @@ function switchDisplayType(type) {
     const gridImages = document.querySelector('#gridImages');
 
     if (type === 'animated') {
-        window.state.displayType = 'animated';
+        window.data.displayType = 'animated';
         gridImages.classList.remove('visible');
 
         setTimeout(function() {
             animatedImages.classList.add('visible');
         }, 200);
     } else if (type === 'grid') {
-        window.state.displayType = 'grid';
+        window.data.displayType = 'grid';
         animatedImages.classList.remove('visible');
 
         setTimeout(function() {
@@ -281,8 +281,8 @@ async function handleStarRating() {
 
 async function saveRating(rating) {
     const ratingInfo = {
-        sunsetTimestamp: window.cleanedSunsetTimestamp.ISOString,
-        displayType: window.state.displayType.charAt(0).toUpperCase() + window.state.displayType.slice(1),
+        sunsetTimestamp: window.data.cleanedSunsetTimestamp.ISOString,
+        displayType: window.data.displayType.charAt(0).toUpperCase() + window.data.displayType.slice(1),
         rating
     };
     
@@ -303,12 +303,14 @@ function observeImagesContainerHeight() {
     document.querySelector('#imagesContainer').style.height = `${imageHeight}px`;
 }
 
-window.onresize = () => {
-    observeImagesContainerHeight();
-}
+window.onresize = observeImagesContainerHeight;
 
-window.state = {
-    displayType: 'animated'
+window.data = {
+    displayType: 'animated',
+    availableDates: null,
+    currentImage: null,
+    cleanedSunsetTimestamp: null,
+    intervalID: null
 };
 
 const dateLabelElement = document.querySelector('h1');
