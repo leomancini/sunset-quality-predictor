@@ -29,8 +29,7 @@
         }',
         CURLOPT_HTTPHEADER => array(
             'Content-Type: application/json',
-            'Authorization: Bearer '.$airtableAuthToken,
-            'Cookie: brw=brwAn7fUeUtdQuWau'
+            'Authorization: Bearer '.$airtableAuthToken
         ),
     ));
 
