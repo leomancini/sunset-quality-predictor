@@ -72,8 +72,21 @@ async function showImagesForRandomDate() {
     }
 }
 
+function cleanTimestamp(timestamp) {
+    // Clean up timestamp so it's read correctly in all browsers, mostly for iOS Safari
+    const inputTimestampComponents = window.currentImage.sunsetTimestamp.split(/[-T.]/);
+    const dateObject = new Date(inputTimestampComponents.slice(0, 3).join('/') + ' ' + inputTimestampComponents[3]);
+    const ISOString = dateObject.toISOString();
+
+    return {
+        dateObject,
+        ISOString
+    };
+}
+
 function showImagesForDate(data) {
     window.currentImage = data.info;
+    window.cleanedSunsetTimestamp = cleanTimestamp(window.currentImage.sunsetTimestamp);
 
     const imagesElement = document.querySelector(`#${data.displayType}Images`);
 
@@ -138,7 +151,25 @@ function showCurrentImage(imagesElement) {
             star.classList.remove('hover');
             star.classList.remove('selected');
         });
+
+        updateDateLabel();
     }, 500);
+}
+
+function hideCurrentImage() {
+    dateLabelElement.classList.remove('visible');
+
+    loadingSpinner.classList.remove('loaded');
+
+    document.querySelector('#animatedImages').classList.remove('visible');
+    document.querySelector('#gridImages').classList.remove('visible');
+}
+
+function updateDateLabel() {
+    const date = window.cleanedSunsetTimestamp.dateObject.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    dateLabelElement.classList.add('visible');
+    dateLabelElement.innerText = date;;
 }
 
 function startImageAnimation(options) {
@@ -248,28 +279,9 @@ async function handleStarRating() {
     });
 }
 
-function hideCurrentImage() {
-    loadingSpinner.classList.remove('loaded');
-
-    document.querySelector('#animatedImages').classList.remove('visible');
-    document.querySelector('#gridImages').classList.remove('visible');
-}
-
-function cleanTimestamp(timestamp) {
-    // Clean up timestamp so it's read correctly in all browsers
-    // Mostly for iOS Safari
-    const inputTimestampComponents = window.currentImage.sunsetTimestamp.split(/[-T.]/);
-    const normalizedTimestamp = new Date(inputTimestampComponents.slice(0,3).join('/') + ' ' + inputTimestampComponents[3]);
-    const cleanedTimestamp = normalizedTimestamp.toISOString();
-
-    return cleanedTimestamp;
-}
-
 async function saveRating(rating) {
-    const cleanedSunsetTimestamp = cleanTimestamp(window.currentImage.sunsetTimestamp)
-
     const ratingInfo = {
-        sunsetTimestamp: cleanedSunsetTimestamp,
+        sunsetTimestamp: window.cleanedSunsetTimestamp.ISOString,
         displayType: window.state.displayType.charAt(0).toUpperCase() + window.state.displayType.slice(1),
         rating
     };
@@ -299,6 +311,7 @@ window.state = {
     displayType: 'animated'
 };
 
+const dateLabelElement = document.querySelector('h1');
 const loadingSpinner = document.querySelector('#loading');
 const starsContainer = document.querySelector('#starsContainer');
 

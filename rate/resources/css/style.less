@@ -69,6 +69,22 @@ body {
                 }
             }
         }
+
+        h1 {
+            color: rgba(255, 255, 255, 1);
+            font-size: 22px;
+            text-align: center;
+            font-weight: 600;
+            margin: @margin;
+            opacity: 0;
+            transition: 0.4s opacity;
+            height: 32px;
+            line-height: 32px;
+
+            &.visible {
+                opacity: 1;
+            }
+        }
     
         #imagesContainer {
             position: relative;
