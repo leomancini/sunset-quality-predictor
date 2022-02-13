@@ -14,7 +14,7 @@ async function getInfoForDate(options) {
 
 async function reload() {
     hideCurrentImage();
-    
+
     const inputDate = window.location.hash.split('#').join('');
 
     await showAnimatedAndGridImagesForDate(inputDate);
@@ -114,6 +114,7 @@ function showCurrentImage(imagesElement) {
 
         if (window.data.mode == 'rating') {
             starsContainer.classList.add('interactive');
+            starsContainer.classList.add('visible');
 
             [].forEach.call(starsContainer.children, function(star) {
                 star.classList.remove('hover');

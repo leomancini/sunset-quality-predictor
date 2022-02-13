@@ -58,8 +58,10 @@ async function handleStarRating() {
 
             showImagesForRandomDate();
 
+            starsContainer.classList.remove('interactive');
+
             setTimeout(function() {
-                starsContainer.classList.remove('interactive');
+                starsContainer.classList.remove('visible');
             }, 300);
         };
     });

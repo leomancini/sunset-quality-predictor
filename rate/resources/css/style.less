@@ -152,8 +152,13 @@ body {
             -webkit-transition: opacity 0.7s ease-out;
             transition: opacity 0.7s ease-out;
             padding-bottom: @margin * 4;
+            pointer-events: none;
 
             &.interactive {
+                pointer-events: all;
+            }
+
+            &.visible {
                 opacity: 1;
 
                 .star {
