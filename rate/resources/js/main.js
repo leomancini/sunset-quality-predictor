@@ -153,7 +153,7 @@ function showCurrentImage(imagesElement) {
         });
 
         updateDateLabel();
-    }, 500);
+    }, 700);
 }
 
 function hideCurrentImage() {
@@ -229,14 +229,14 @@ function switchDisplayType(type) {
 
         setTimeout(function() {
             animatedImages.classList.add('visible');
-        }, 200);
+        }, 700);
     } else if (type === 'grid') {
         window.data.displayType = 'grid';
         animatedImages.classList.remove('visible');
 
         setTimeout(function() {
             gridImages.classList.add('visible');
-        }, 200);
+        }, 700);
     }
 }
 
