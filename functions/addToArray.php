@@ -7,10 +7,10 @@
 
             if ($options['CHECK_EXISTS']) {
                 if (file_exists(dirname(__FILE__).'/../'.$filename)) {
-                    array_push($timesFromMidnightToSunset, $filename);
+                    array_push($timesFromMidnightToSunset, $options['RELATIVE_PATH'].$filename);
                 }
             } else {
-                array_push($timesFromMidnightToSunset, $filename);
+                array_push($timesFromMidnightToSunset, $options['RELATIVE_PATH'].$filename);
             }
         } else {
             array_push($timesFromMidnightToSunset, $minuteFormatted);

@@ -1,7 +1,12 @@
 <?php
-    // Customized from https://diceattack.wordpress.com/2011/01/03/combining-multiple-images-using-php-and-gd/
-    function generateCompositeGridImage($srcImagePaths) {
-        $gridSize = 8;
+    // Modified from https://diceattack.wordpress.com/2011/01/03/combining-multiple-images-using-php-and-gd/
+    function generateCompositeGridImage($srcImagePaths, $options) {
+        if ($options['GRID_SIZE']) {
+            $gridSize = $options['GRID_SIZE'];
+        } else {
+            $gridSize = 8;
+        }
+        
         $scale = 0.3;
 
         $tileWidth = 1920 / (1 / $scale);
@@ -27,7 +32,11 @@
         $thumbImage = imagecreatetruecolor($thumbWidth, $thumbHeight);
         imagecopyresampled($thumbImage, $mapImage, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $mapWidth, $mapHeight);
         
-        imagejpeg($thumbImage);
+        if ($options['SAVE_AS_FILE']) {
+            imagejpeg($thumbImage, $options['DIRECTORY'].$options['FILENAME'].'.jpg');
+        } else {
+            imagejpeg($thumbImage);
+        }
     }
     
     function indexToCoords($index, $tileWidth, $tileHeight, $gridSize, $scale) {

@@ -1,7 +1,7 @@
 <?php
-    require('config.php');
-    require('functions/getSunsetTime.php');
-    require('functions/addToArray.php');
+    require($relativePath.'config.php');
+    require($relativePath.'functions/getSunsetTime.php');
+    require($relativePath.'functions/addToArray.php');
 
     function getTimesFromMidnightToSunset($date, $options) {
         global $CONFIG;
@@ -15,7 +15,13 @@
         $sunsetTime = getSunsetTime($date);
         $midnightTime = new DateTime($date->format('Y-m-d')." 00:00");
         $interval = DateInterval::createFromDateString($interval);
-        $period = new DatePeriod($midnightTime, $interval, $sunsetTime);
+
+        if ($options['OFFSET_FROM_SUNSET']) {
+            $timeBeforeSunsetTime = new DateTime($sunsetTime->format("Y-m-d H:i").' '.$options['OFFSET_FROM_SUNSET']);
+            $period = new DatePeriod($midnightTime, $interval, $timeBeforeSunsetTime);
+        } else {
+            $period = new DatePeriod($midnightTime, $interval, $sunsetTime);
+        }
     
         $allTimesFromMidnightToSunset = Array();
     
