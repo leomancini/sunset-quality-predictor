@@ -5,13 +5,15 @@
 
     require($relativePath.'functions/getTimesBeforeSunset.php');
     require($relativePath.'functions/generateCompositeGridImage.php');
+    require($relativePath.'functions/generateAvailableDates.php');
 
-    // TODO: Replace with function to list all dates from start date
-    $dates = [
-        '2022-02-19',
-        '2022-02-20',
-        '2022-02-21'
-    ];
+    // $dates = [
+    //     '2021-12-16'
+    // ];
+
+    $dates = generateAvailableDates([
+        'LAST_DATE' => '2022-03-11'
+    ]);
 
     foreach ($dates as &$dateInput) {
         $date = new DateTime($dateInput);
@@ -24,8 +26,6 @@
             'CHECK_EXISTS' => 'REMOTE',
             'LIMIT' => ((60 / 10) * 21)
         ]);
-
-        // print_r($srcImagePaths);
         
         generateCompositeGridImage($srcImagePaths, [
             'SAVE_AS_FILE' => true,
