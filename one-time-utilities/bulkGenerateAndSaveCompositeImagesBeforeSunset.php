@@ -1,13 +1,15 @@
 <?php
-    set_time_limit(5 * 60); // Allow script to execute for a maximum of 5 minutes
+    set_time_limit(60 * 60); // Allow script to execute for a maximum of 60 minutes
 
     $relativePath = '../';
 
-    require('../functions/getTimesBeforeSunset.php');
-    require('../functions/generateCompositeGridImage.php');
+    require($relativePath.'functions/getTimesBeforeSunset.php');
+    require($relativePath.'functions/generateCompositeGridImage.php');
 
     // TODO: Replace with function to list all dates from start date
     $dates = [
+        '2022-02-19',
+        '2022-02-20',
         '2022-02-21'
     ];
 
@@ -19,9 +21,11 @@
             'INTERVAL' => '10 minutes',
             'RELATIVE_PATH' => $relativePath,
             'FILENAME' => true,
-            'CHECK_EXISTS' => true,
-            'LIMIT' => 8 * 8
+            'CHECK_EXISTS' => 'REMOTE',
+            'LIMIT' => ((60 / 10) * 21)
         ]);
+
+        // print_r($srcImagePaths);
         
         generateCompositeGridImage($srcImagePaths, [
             'SAVE_AS_FILE' => true,

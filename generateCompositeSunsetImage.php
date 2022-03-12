@@ -2,39 +2,8 @@
     if ($_GET['date']) {
         require('config.php');
         require('functions/getSunsetTime.php');
+        require('functions/getTimesBeforeOrAfterSunsetTime.php');
         require('functions/addToArray.php');
-
-        function getTimesBeforeOrAfterSunsetTime($direction, $range, $interval) {
-            global $sunsetTime;
-
-            $beforeOrAfterSunsetTime = new DateTime($sunsetTime->format("Y-m-d H:i").' '.$range);
-            $interval = DateInterval::createFromDateString($interval);
-
-            if ($direction === 'BEFORE') {
-                $period = new DatePeriod($beforeOrAfterSunsetTime, $interval, $sunsetTime);
-            } else if ($direction === 'AFTER') {
-                $period = new DatePeriod($sunsetTime, $interval, $beforeOrAfterSunsetTime);
-            }
-
-            $allTimesFromBeforeOrAfterToSunset = Array();
-
-            foreach ($period as $minute) {
-                array_push($allTimesFromBeforeOrAfterToSunset, $minute);
-            }
-
-            $timesFromBeforeOrAfterToSunset = Array();
-            $index = 0;
-
-            foreach ($allTimesFromBeforeOrAfterToSunset as $minute) {
-                $minuteFormatted = $minute->format("Y-m-d-H-i");
-
-                addToArray(null, $minuteFormatted, $timesFromBeforeOrAfterToSunset);
-
-                $index++;
-            }
-
-            return $timesFromBeforeOrAfterToSunset;
-        }
 
         $dateInput = $_GET['date'];
         $date = new DateTime($dateInput);
@@ -51,8 +20,8 @@
 
         $sunsetTime = getSunsetTime($date);
         $sunsetRangeTimes = [
-            "timesFromBeforeToSunset" => getTimesBeforeOrAfterSunsetTime('BEFORE', $beforePeriod, $beforeInterval),
-            "timesFromAfterToSunset" => getTimesBeforeOrAfterSunsetTime('AFTER', $afterPeriod, $afterInterval)
+            "timesFromBeforeToSunset" => getTimesBeforeOrAfterSunsetTime($sunsetTime, 'BEFORE', $beforePeriod, $beforeInterval),
+            "timesFromAfterToSunset" => getTimesBeforeOrAfterSunsetTime($sunsetTime, 'AFTER', $afterPeriod, $afterInterval)
         ];
 
         $combinedSunsetRangeTimes = array_merge($sunsetRangeTimes['timesFromBeforeToSunset'], $sunsetRangeTimes['timesFromAfterToSunset']);
@@ -87,7 +56,7 @@
 
             require('functions/generateCompositeGridImage.php');
 
-            generateCompositeGridImage($srcImagePaths);
+            generateCompositeGridImage($srcImagePaths, null);
         }
     } else {
         echo '<pre>No date input!</pre>';

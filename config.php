@@ -8,7 +8,8 @@
             'LAT' => '40.730610',
             'LNG' => '-73.935242'
         ],
-        'TIMEZONE' => 'America/New_York'
+        'TIMEZONE' => 'America/New_York',
+        'FIRST_DATE' => '2021-12-16'
     ];
 
     date_default_timezone_set($CONFIG['TIMEZONE']);

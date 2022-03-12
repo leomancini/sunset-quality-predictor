@@ -1,10 +1,6 @@
 async function getInfoForDate(options) {
     let pathToServerFunctions = '..';
 
-    if (window.data.mode === 'viewer') {
-        pathToServerFunctions = '../sunset-quality-predictor';
-    }
-
     let optionsString = new URLSearchParams(options).toString();
     let response = await fetch(`${pathToServerFunctions}/generateCompositeSunsetImage.php?${optionsString}`);
     let data = await response.json();
@@ -64,7 +60,7 @@ function showImagesForDate(data) {
 
     data.info.sunsetRangeTimes.forEach(time => {
         let imageElement = document.createElement('img');
-        imageElement.src = `../../nest-cam-timelapse/images/SKYLINE/${time}.jpg`;
+        imageElement.src = `../data/sunsetImagesForRating/${data.info.date}/${time}.jpg`;
         imageElement.id = `image-${imageIndex}`;
 
         imagesElement.appendChild(imageElement);

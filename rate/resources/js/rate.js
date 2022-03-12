@@ -1,5 +1,6 @@
 async function getAvailableDates() {
-    let response = await fetch('../getAvailableDates.php');
+    let lastDateDownloaded = '2022-03-11';
+    let response = await fetch(`../getAvailableDates.php?last_date=${lastDateDownloaded}`);
     let data = await response.json();
 
     return data;

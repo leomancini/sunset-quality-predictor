@@ -2,7 +2,7 @@
     require('config.php');
     require('functions/getSunsetTime.php');
 
-    $begin = new DateTime('2021-12-16');
+    $begin = new DateTime($CONFIG['FIRST_DATE']);
     $now = new DateTime(); // Today
 
     $todaySunsetTime = getSunsetTime($now);
