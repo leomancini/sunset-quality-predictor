@@ -22,7 +22,7 @@ async function showAnimatedAndGridImagesForDate(date) {
         output: 'JSON',
         beforePeriod: '-30 minutes',
         beforeInterval: '1 minutes',
-        afterPeriod: '+30 minutes',
+        afterPeriod: '+60 minutes',
         afterInterval: '1 minutes'
     });
 
@@ -36,7 +36,7 @@ async function showAnimatedAndGridImagesForDate(date) {
         output: 'JSON',
         beforePeriod: '-12 minutes',
         beforeInterval: '2 minutes',
-        afterPeriod: '+30 minutes',
+        afterPeriod: '+70 minutes',
         afterInterval: '5 minutes'
     });
 

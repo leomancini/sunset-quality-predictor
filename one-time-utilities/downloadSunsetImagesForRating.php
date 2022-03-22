@@ -27,24 +27,17 @@
 
         $date = new DateTime($dateInput);
 
-        // THESE NEED TO MATCH THE VALUES IN showAnimatedAndGridImagesForDate() in /rate/resources/js/viewer.js
-        $imagesForAnimated = getTimesBeforeOrAfterSunsetTimeWithParams($date, [
+        // THESE NEED TO EXCEED THE VALUES IN showAnimatedAndGridImagesForDate() in /rate/resources/js/viewer.js
+        // Need to download the same or more images than are to be viewed
+        // At least every 1 minute
+        $imagesToDownload = getTimesBeforeOrAfterSunsetTimeWithParams($date, [
             'BEFORE_PERIOD' => '-30 minutes',
             'BEFORE_INTERVAL' => '1 minutes',
-            'AFTER_PERIOD' => '+30 minutes',
+            'AFTER_PERIOD' => '+70 minutes',
             'AFTER_INTERVAL' => '1 minutes',
         ]);
 
-        $imagesForGrid = getTimesBeforeOrAfterSunsetTimeWithParams($date, [
-            'BEFORE_PERIOD' => '-12 minutes',
-            'BEFORE_INTERVAL' => '2 minutes',
-            'AFTER_PERIOD' => '+30 minutes',
-            'AFTER_INTERVAL' => '5 minutes',
-        ]);
-
-        $combinedImages = array_merge($imagesForAnimated, $imagesForGrid);
-
-        foreach ($combinedImages as $filename) {
+        foreach ($imagesToDownload as $filename) {
             $path = $CONFIG['SERVER'].'/'.$CONFIG['IMG_PATH'].'/'.$filename.'.jpg';
 
             mkdir('../data/sunsetImagesForRating/'.$date->format('Y-m-d').'/');
@@ -57,8 +50,7 @@
     }
 
     $availableDates = generateAvailableDates([
-        'FIRST_DATE' => '2022-03-11',
-        'LAST_DATE' => '2022-03-11'
+        'LAST_DATE' => '2022-03-21'
     ]);
 
     foreach ($availableDates as $availableDate) {

@@ -1,5 +1,5 @@
 async function getAvailableDates() {
-    let lastDateDownloaded = '2022-03-11';
+    let lastDateDownloaded = '2022-03-21';
     let response = await fetch(`../getAvailableDates.php?last_date=${lastDateDownloaded}`);
     let data = await response.json();
 
@@ -15,6 +15,9 @@ async function showImagesForRandomDate() {
         });
     
         showAnimatedAndGridImagesForDate(randomAvailableDate);
+
+        // Debug - to look at a specific date
+        // showAnimatedAndGridImagesForDate('2021-12-26');
     } else {
         loadingSpinner.classList.add('loaded');
 
