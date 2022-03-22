@@ -6,7 +6,7 @@
     require($relativePath.'config.php');
 
     if ($_GET['password'] !== $SECRETS['ONE_TIME_UTILITIES_PASSWORD']) { exit(); }
-    
+
     require($relativePath.'functions/getSunsetTime.php');
     require($relativePath.'functions/getTimesBeforeOrAfterSunsetTime.php');
     require($relativePath.'functions/addToArray.php');
