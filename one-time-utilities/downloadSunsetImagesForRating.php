@@ -2,7 +2,6 @@
     set_time_limit(60 * 60); // Allow script to execute for a maximum of 60 minutes
 
     $relativePath = '../';
-    
     require($relativePath.'config.php');
 
     if ($_GET['password'] !== $SECRETS['ONE_TIME_UTILITIES_PASSWORD']) { exit(); }

@@ -12,6 +12,7 @@
     } else {
         $dates = generateAvailableDates([]);
     }
+    
     echo json_encode($dates);
 
     if ($_GET['debug'] === 'true') { echo '</pre>'; }

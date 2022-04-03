@@ -2,7 +2,6 @@
     set_time_limit(60 * 60); // Allow script to execute for a maximum of 60 minutes
 
     $relativePath = '../';
-    
     require($relativePath.'config.php');
 
     if ($_GET['password'] !== $SECRETS['ONE_TIME_UTILITIES_PASSWORD']) { exit(); }
@@ -12,8 +11,8 @@
     require($relativePath.'functions/generateAvailableDates.php');
 
     $dates = generateAvailableDates([
-        'FIRST_DATE' => '2022-03-12',
-        'LAST_DATE' => '2022-03-14'
+        'FIRST_DATE' => '2022-03-15',
+        'LAST_DATE' => '2022-03-21'
     ]);
 
     foreach ($dates as &$dateInput) {
