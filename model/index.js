@@ -126,7 +126,9 @@ function gatherDataForClass(filename, classNumber) {
                 [MOBILE_NET_INPUT_HEIGHT, MOBILE_NET_INPUT_WIDTH],
                 true
             );
+            
             let normalizedTensorFrame = resizedTensorFrame.div(255);
+
             return mobilenet
                 .predict(normalizedTensorFrame.expandDims())
                 .squeeze();
@@ -149,16 +151,13 @@ function gatherDataForClass(filename, classNumber) {
 }
 
 async function loadMobileNetFeatureModel() {
-    const URL =
-        'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v3_small_100_224/feature_vector/5/default/1';
+    const URL = 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v3_small_100_224/feature_vector/5/default/1';
 
     mobilenet = await tf.loadGraphModel(URL, { fromTFHub: true });
     STATUS.innerText = 'MobileNet v3 loaded successfully!';
 
     tf.tidy(function () {
-        let answer = mobilenet.predict(
-            tf.zeros([1, MOBILE_NET_INPUT_HEIGHT, MOBILE_NET_INPUT_WIDTH, 3])
-        );
+        let answer = mobilenet.predict(tf.zeros([1, MOBILE_NET_INPUT_HEIGHT, MOBILE_NET_INPUT_WIDTH, 3]));
         console.log(answer.shape);
     });
 }
@@ -166,12 +165,11 @@ async function loadMobileNetFeatureModel() {
 loadMobileNetFeatureModel();
 
 model = tf.sequential();
-model.add(
-    tf.layers.dense({ inputShape: [1024], units: 128, activation: 'relu' })
-);
-model.add(
-    tf.layers.dense({ units: CLASS_NAMES.length, activation: 'softmax' })
-);
+
+model.add(tf.layers.dense({ inputShape: [1024], units: 128, activation: 'relu' }));
+
+model.add(tf.layers.dense({ units: CLASS_NAMES.length, activation: 'softmax' }));
+
 model.summary();
 
 model.compile({
