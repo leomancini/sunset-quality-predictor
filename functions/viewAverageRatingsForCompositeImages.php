@@ -9,13 +9,18 @@
     $airtableAuthToken = $SECRETS['AIRTABLE_API_KEY'];
     $allRecords = [];
 
-    echo '<pre>';
-
+    
     $ratings = generateAverageRatings();
     
+    $sunsetsWithRatings = [];
+
     foreach ($ratings as $sunsetDate => $ratingInfo) {
-        echo $sunsetDate.' average rating is '.$ratingInfo['average']['rounded'].'<br>';
+        $sunsetsWithRatings[$sunsetDate] = $ratingInfo['average']['rounded'];
     }
 
-    echo '</pre>';
+    if($_GET['debug']) { echo '<pre>'; }
+
+    echo json_encode($sunsetsWithRatings);
+
+    if($_GET['debug']) { echo '</pre>'; }
 ?>
