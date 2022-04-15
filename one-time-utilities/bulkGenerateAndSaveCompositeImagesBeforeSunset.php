@@ -4,7 +4,7 @@
     $relativePath = '../';
     require($relativePath.'config.php');
 
-    if ($_GET['password'] !== $SECRETS['ONE_TIME_UTILITIES_PASSWORD']) { exit(); }
+    if ($_GET['password'] !== $SECRETS['PROTECTED_CODE_PASSWORD']) { exit(); }
 
     require($relativePath.'functions/getTimesBeforeSunset.php');
     require($relativePath.'functions/generateCompositeGridImage.php');
