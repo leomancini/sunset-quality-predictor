@@ -2,18 +2,20 @@
     $relativePath = '../';
     require($relativePath.'config.php');
 
-    if ($_GET['password'] !== $SECRETS['PROTECTED_CODE_PASSWORD']) { exit(); }
+    // if ($_GET['password'] !== $SECRETS['PROTECTED_CODE_PASSWORD']) { exit(); }
 
     $airtableAuthToken = $SECRETS['AIRTABLE_API_KEY'];
+    $airtableBaseId = $SECRETS['AIRTABLE_BASE_ID'];
     $allRecords = [];
 
     function getRecordsPage($offset) {
         global $airtableAuthToken;
+        global $airtableBaseId;
 
         $request = curl_init();
 
         curl_setopt_array($request, array(
-            CURLOPT_URL => 'https://api.airtable.com/v0/appMjqWKwL86HUWWX/Ratings?maxResults=9999&pageSize=100&offset='.$offset,
+            CURLOPT_URL => 'https://api.airtable.com/v0/'.$airtableBaseId.'/Ratings?maxResults=9999&pageSize=100&offset='.$offset,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
