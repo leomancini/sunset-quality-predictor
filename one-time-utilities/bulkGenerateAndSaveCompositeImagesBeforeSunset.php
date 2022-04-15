@@ -11,8 +11,8 @@
     require($relativePath.'functions/generateAvailableDates.php');
 
     $dates = generateAvailableDates([
-        'FIRST_DATE' => '2022-03-15',
-        'LAST_DATE' => '2022-03-21'
+        'FIRST_DATE' => '2022-03-22',
+        'LAST_DATE' => '2022-04-02'
     ]);
 
     foreach ($dates as &$dateInput) {
