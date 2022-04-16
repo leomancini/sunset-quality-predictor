@@ -1,25 +1,27 @@
-let model;
-let mobilenet = undefined;
-let trainingDataInputs = [];
-let trainingDataOutputs = [];
-let examplesCount = [];
-
 const MOBILE_NET_INPUT_WIDTH = 224;
 const MOBILE_NET_INPUT_HEIGHT = 224;
-const STOP_DATA_GATHER = -1;
-const CLASS_NAMES = ['Rating 1', 'Rating 2', 'Rating 3', 'Rating 4', 'Rating 5'];
+const CLASS_NAMES = [1, 2, 3, 4, 5];
+const SAVED_MODELS_URL = 'http://localhost/sunset-quality-predictor/model/savedModels/';
+const LATEST_MODEL = 'sunsetQualityPreidctorModel-2022-04-16T14-34-32-344Z.json';
 
 const STATUS = document.getElementById('status');
-const GATHER_DATA_BUTTON = document.getElementById('gatherData');
-const TRAIN_BUTTON = document.getElementById('train');
-const PREDICT_BUTTON = document.getElementById('predict');
 
-GATHER_DATA_BUTTON.addEventListener('click', gatherData);
-TRAIN_BUTTON.addEventListener('click', trainAndSaveModel);
-PREDICT_BUTTON.addEventListener('click', makePrediction);
+if (TRAINING_PAGE) {
+    const GATHER_DATA_BUTTON = document.getElementById('gatherData');
+    const TRAIN_BUTTON = document.getElementById('train');
+    
+    GATHER_DATA_BUTTON.addEventListener('click', gatherData);
+    TRAIN_BUTTON.addEventListener('click', trainAndSaveModel);
+}
+
+function updateStatus(message) {
+    if (STATUS) {
+        STATUS.innerText = message;
+    }
+}
 
 async function trainAndSaveModel() {
-    STATUS.innerText = 'Training model...';
+    updateStatus('Training model...');
 
     tf.util.shuffleCombo(trainingDataInputs, trainingDataOutputs);
     let outputsAsTensor = tf.tensor1d(trainingDataOutputs, 'int32');
@@ -29,7 +31,7 @@ async function trainAndSaveModel() {
     await model.fit(inputsAsTensor, oneHotOutputs, {
         shuffle: true,
         batchSize: 5,
-        epochs: 10,
+        epochs: 100,
         callbacks: { onEpochEnd: logProgress },
     });
 
@@ -48,11 +50,11 @@ async function getSunsetsWithRatings() {
 }
 
 async function gatherData() {
-    STATUS.innerText = 'Getting ratings from Airtable...';
+    updateStatus('Getting ratings from Airtable...');
     
     const sunsetsWithRatings = await getSunsetsWithRatings();
 
-    STATUS.innerText = 'Setting ratings...';
+    updateStatus('Setting ratings...');
 
     for (let sunset in sunsetsWithRatings) {
         let rating = parseInt(sunsetsWithRatings[sunset]);
@@ -63,12 +65,12 @@ async function gatherData() {
 }
 
 async function makePrediction() {
-    let date = '2022-03-31';
+    let date = window.location.hash.split('#').join('');
 
     try {
-        window.model = await tf.loadLayersModel('localstorage://sunsetQualityPreidctorModel');
+        window.model = await tf.loadLayersModel(`${SAVED_MODELS_URL}/${LATEST_MODEL}`);
     } finally {
-        tf.tidy(function () {
+        tf.tidy(function() {
             const image = new Image();
             image.src = `data/unseen/${date}.jpg`;
             image.onload = () => {
@@ -87,32 +89,45 @@ async function makePrediction() {
                 let highestIndex = prediction.argMax().arraySync();
                 let predictionArray = prediction.arraySync();
 
-                STATUS.innerText =
+                updateStatus(
                     date +
                     ' - ' +
                     CLASS_NAMES[highestIndex] +
                     ' with ' +
                     Math.floor(predictionArray[highestIndex] * 100) +
-                    '% confidence';
+                    '% confidence');
 
-                console.log(`http://skyline.noshado.ws/view-sunset/viewer.html#${date}`)
+                console.log(`http://skyline.noshado.ws/view-sunset/viewer.html#${date}`);
+
+                publishPrediction({
+                    date,
+                    rating: parseInt(CLASS_NAMES[highestIndex]),
+                    confidence: Math.floor(predictionArray[highestIndex] * 100)
+                });
             };
         });
     }
 }
 
+function publishPrediction(data) {
+    console.log(data);
+}
+
 function logProgress(epoch, logs) {
-    STATUS.innerText = `Epoch ${epoch}`;
+    updateStatus(`Epoch ${epoch}`);
 
     console.log('Data for epoch ' + epoch, logs);
 }
 
 async function saveModel() {
-    STATUS.innerText = 'Saving model...';
+    updateStatus('Saving model...');
 
-    await model.save('localstorage://sunsetQualityPreidctorModel');
+    let today = new Date();
+    let timestamp = today.toISOString().split(':').join('-').split('.').join('-');
 
-    STATUS.innerText = 'Model trained and saved! Ready to use!';
+    await model.save(`downloads://sunsetQualityPreidctorModel-${timestamp}`);
+
+    updateStatus('Model trained and saved! Ready to use!');
 }
 
 function gatherDataForClass(filename, classNumber) {
@@ -142,10 +157,9 @@ function gatherDataForClass(filename, classNumber) {
         }
         examplesCount[classNumber]++;
 
-        STATUS.innerText = '';
+        updateStatus('');
         for (let n = 0; n < CLASS_NAMES.length; n++) {
-            STATUS.innerText +=
-                CLASS_NAMES[n] + ' data count: ' + examplesCount[n] + '. ';
+            updateStatus(CLASS_NAMES[n] + ' data count: ' + examplesCount[n] + '. ');
         }
     };
 }
@@ -154,7 +168,7 @@ async function loadMobileNetFeatureModel() {
     const URL = 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v3_small_100_224/feature_vector/5/default/1';
 
     mobilenet = await tf.loadGraphModel(URL, { fromTFHub: true });
-    STATUS.innerText = 'MobileNet v3 loaded successfully!';
+    updateStatus('MobileNet v3 loaded successfully!');
 
     tf.tidy(function () {
         let answer = mobilenet.predict(tf.zeros([1, MOBILE_NET_INPUT_HEIGHT, MOBILE_NET_INPUT_WIDTH, 3]));
@@ -162,7 +176,13 @@ async function loadMobileNetFeatureModel() {
     });
 }
 
-loadMobileNetFeatureModel();
+let model;
+let mobilenet = undefined;
+let trainingDataInputs = [];
+let trainingDataOutputs = [];
+let examplesCount = [];
+
+await loadMobileNetFeatureModel();
 
 model = tf.sequential();
 
@@ -177,3 +197,11 @@ model.compile({
     loss: 'categoricalCrossentropy',
     metrics: [ 'accuracy' ],
 });
+
+if (!TRAINING_PAGE && window.location.hash) {
+    makePrediction();
+}
+
+window.addEventListener('hashchange', function() {
+    makePrediction();
+}, false);
