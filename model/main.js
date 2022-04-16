@@ -16,7 +16,7 @@ if (TRAINING_PAGE) {
 
 function updateStatus(message) {
     if (STATUS) {
-        STATUS.innerText = message;
+        STATUS.innerHTML = message;
     }
 }
 
@@ -72,7 +72,7 @@ async function makePrediction() {
     } finally {
         tf.tidy(function() {
             const image = new Image();
-            image.src = `data/unseen/${date}.jpg`;
+            image.src = `../data/compositeImagesBeforeSunset/forPrediction/${date}.jpg`;
             image.onload = () => {
                 let imageAsTensor = tf.browser.fromPixels(image).div(255);
                 let resizedTensorFrame = tf.image.resizeBilinear(
@@ -89,13 +89,13 @@ async function makePrediction() {
                 let highestIndex = prediction.argMax().arraySync();
                 let predictionArray = prediction.arraySync();
 
-                updateStatus(
-                    date +
-                    ' - ' +
-                    CLASS_NAMES[highestIndex] +
-                    ' with ' +
-                    Math.floor(predictionArray[highestIndex] * 100) +
-                    '% confidence');
+                let predictionResult = {
+                    date,
+                    rating: parseInt(CLASS_NAMES[highestIndex]),
+                    confidence: Math.floor(predictionArray[highestIndex] * 100)
+                };
+
+                updateStatus(`Sunset on ${date} predicted to be <b>${predictionResult.rating} stars</b> at a ${predictionResult.confidence}% confidence!`);
 
                 console.log(`http://skyline.noshado.ws/view-sunset/viewer.html#${date}`);
 
@@ -105,6 +105,9 @@ async function makePrediction() {
                     confidence: Math.floor(predictionArray[highestIndex] * 100)
                 });
             };
+            image.onerror = () => {
+                updateStatus(`ERROR: No composite image found for ${date}!`);
+            }
         });
     }
 }
@@ -132,7 +135,7 @@ async function saveModel() {
 
 function gatherDataForClass(filename, classNumber) {
     const image = new Image();
-    image.src = `data/training/${filename}.jpg`;
+    image.src = `trainingData/${filename}.jpg`;
     image.onload = () => {
         let imageFeatures = tf.tidy(function () {
             let imageAsTensor = tf.browser.fromPixels(image);
