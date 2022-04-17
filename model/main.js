@@ -17,6 +17,7 @@ if (TRAINING_PAGE) {
 function updateStatus(message) {
     if (STATUS) {
         STATUS.innerHTML = message;
+        console.log(message);
     }
 }
 
@@ -32,7 +33,7 @@ async function trainAndSaveModel() {
         shuffle: true,
         batchSize: 5,
         epochs: 100,
-        callbacks: { onEpochEnd: logProgress },
+        callbacks: { onEpochEnd: logTrainingProgress },
     });
 
     outputsAsTensor.dispose();
@@ -64,15 +65,17 @@ async function gatherData() {
     }
 }
 
-async function makePrediction() {
-    let date = window.location.hash.split('#').join('');
-
+async function makePrediction(date) {
     try {
+        updateStatus('Loading model...');
         window.model = await tf.loadLayersModel(`${SAVED_MODELS_URL}/${LATEST_MODEL}`);
     } finally {
         tf.tidy(function() {
+            updateStatus(`Making prediction for ${date}...`);
+
             const image = new Image();
             image.src = `../data/compositeImagesBeforeSunset/forPrediction/${date}.jpg`;
+            
             image.onload = () => {
                 let imageAsTensor = tf.browser.fromPixels(image).div(255);
                 let resizedTensorFrame = tf.image.resizeBilinear(
@@ -105,6 +108,7 @@ async function makePrediction() {
                     confidence: Math.floor(predictionArray[highestIndex] * 100)
                 });
             };
+
             image.onerror = () => {
                 updateStatus(`ERROR: No composite image found for ${date}!`);
             }
@@ -112,11 +116,38 @@ async function makePrediction() {
     }
 }
 
+async function getCompositeImageAndMakePrediction() {
+    let date = window.location.hash.split('#').join('');
+
+    const compositeImageForPrediction = new Image();
+    compositeImageForPrediction.src = `../data/compositeImagesBeforeSunset/forPrediction/${date}.jpg`;
+
+    updateStatus(`Checking for composite image for ${date}...`);
+        
+    compositeImageForPrediction.onload = async () => {
+        updateStatus(`Found existing composite image for ${date}...`);
+        makePrediction(date);
+    }
+
+    compositeImageForPrediction.onerror = async () => {
+        updateStatus(`Generating composite image for ${date}...`);
+
+        const compositeImageData = await fetch(`http://localhost/sunset-quality-predictor/generateAndSaveCompositeImageBeforeSunset.php?date=${date}`);
+        const compositeImageResponse = await compositeImageData.json();
+
+        if (compositeImageResponse.success) {
+            updateStatus(`Successfully generated composite image for ${date}...`);
+
+            makePrediction(date);
+        }
+    }
+}
+
 function publishPrediction(data) {
     console.log(data);
 }
 
-function logProgress(epoch, logs) {
+function logTrainingProgress(epoch, logs) {
     updateStatus(`Epoch ${epoch}`);
 
     console.log('Data for epoch ' + epoch, logs);
@@ -171,11 +202,10 @@ async function loadMobileNetFeatureModel() {
     const URL = 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v3_small_100_224/feature_vector/5/default/1';
 
     mobilenet = await tf.loadGraphModel(URL, { fromTFHub: true });
-    updateStatus('MobileNet v3 loaded successfully!');
+    updateStatus('Sucessfully loaded MobileNet v3!');
 
     tf.tidy(function () {
         let answer = mobilenet.predict(tf.zeros([1, MOBILE_NET_INPUT_HEIGHT, MOBILE_NET_INPUT_WIDTH, 3]));
-        console.log(answer.shape);
     });
 }
 
@@ -202,9 +232,9 @@ model.compile({
 });
 
 if (!TRAINING_PAGE && window.location.hash) {
-    makePrediction();
+    getCompositeImageAndMakePrediction();
 }
 
 window.addEventListener('hashchange', function() {
-    makePrediction();
+    getCompositeImageAndMakePrediction();
 }, false);
