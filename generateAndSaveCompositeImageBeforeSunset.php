@@ -1,6 +1,6 @@
 <?php
     if ($_GET['date']) {
-        set_time_limit(60 * 60); // Allow script to execute for a maximum of 60 minutes
+        set_time_limit(60 * 10); // Allow script to execute for a maximum of 10 minutes
     
         require('config.php');    
         require('functions/getTimesBeforeSunset.php');
@@ -23,6 +23,8 @@
             'FILENAME' => $date->format('Y-m-d'),
             'GRID_SIZE' => 8
         ]);
+
+        echo json_encode(['success' => true]);
     } else {
         echo '<pre>No date input!</pre>';
     }
