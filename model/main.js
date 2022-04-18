@@ -1,6 +1,7 @@
-const MOBILE_NET_INPUT_WIDTH = 224;
-const MOBILE_NET_INPUT_HEIGHT = 224;
+const MOBILE_NET_INPUT_SIZE = 224;
 const CLASS_NAMES = [1, 2, 3, 4, 5];
+
+const COMPOSITE_IMAGES_PATH = '../data/compositeImagesBeforeSunset/forPrediction/';
 const SAVED_MODELS_URL = 'http://localhost/sunset-quality-predictor/model/savedModels/';
 const LATEST_MODEL = 'sunsetQualityPreidctorModel-2022-04-16T14-34-32-344Z.json';
 
@@ -65,7 +66,35 @@ async function gatherData() {
     }
 }
 
-async function makePrediction(date) {
+async function getCompositeImageAndMakePrediction() {
+    let date = window.location.hash.split('#').join('');
+
+    const compositeImageForPrediction = new Image();
+    const compositeImageURL = `${COMPOSITE_IMAGES_PATH}${date}.jpg`;
+    compositeImageForPrediction.src = compositeImageURL;
+
+    updateStatus(`Checking for composite image for ${date}...`);
+
+    compositeImageForPrediction.onload = async () => {
+        updateStatus(`Found existing composite image for ${date}...`);
+        makePrediction(date, compositeImageURL);
+    }
+
+    compositeImageForPrediction.onerror = async () => {
+        updateStatus(`Generating composite image for ${date}...`);
+
+        const compositeImageData = await fetch(`../generateAndSaveCompositeImageBeforeSunset.php?date=${date}`);
+        const compositeImageResponse = await compositeImageData.json();
+
+        if (compositeImageResponse.success) {
+            updateStatus(`Successfully generated composite image for ${date}...`);
+
+            makePrediction(date, compositeImageURL);
+        }
+    }
+}
+
+async function makePrediction(date, compositeImageURL) {
     try {
         updateStatus('Loading model...');
         window.model = await tf.loadLayersModel(`${SAVED_MODELS_URL}/${LATEST_MODEL}`);
@@ -73,14 +102,14 @@ async function makePrediction(date) {
         tf.tidy(function() {
             updateStatus(`Making prediction for ${date}...`);
 
-            const image = new Image();
-            image.src = `../data/compositeImagesBeforeSunset/forPrediction/${date}.jpg`;
+            const compositeImageForPrediction = new Image();
+            compositeImageForPrediction.src = compositeImageURL;
             
-            image.onload = () => {
+            compositeImageForPrediction.onload = () => {
                 let imageAsTensor = tf.browser.fromPixels(image).div(255);
                 let resizedTensorFrame = tf.image.resizeBilinear(
                     imageAsTensor,
-                    [MOBILE_NET_INPUT_HEIGHT, MOBILE_NET_INPUT_WIDTH],
+                    [MOBILE_NET_INPUT_SIZE, MOBILE_NET_INPUT_SIZE],
                     true
                 );
 
@@ -105,41 +134,15 @@ async function makePrediction(date) {
                 publishPrediction({
                     date,
                     rating: parseInt(CLASS_NAMES[highestIndex]),
-                    confidence: Math.floor(predictionArray[highestIndex] * 100)
+                    confidence: Math.floor(predictionArray[highestIndex] * 100),
+                    compositeImageURL
                 });
             };
 
-            image.onerror = () => {
+            compositeImageForPrediction.onerror = () => {
                 updateStatus(`ERROR: No composite image found for ${date}!`);
             }
         });
-    }
-}
-
-async function getCompositeImageAndMakePrediction() {
-    let date = window.location.hash.split('#').join('');
-
-    const compositeImageForPrediction = new Image();
-    compositeImageForPrediction.src = `../data/compositeImagesBeforeSunset/forPrediction/${date}.jpg`;
-
-    updateStatus(`Checking for composite image for ${date}...`);
-
-    compositeImageForPrediction.onload = async () => {
-        updateStatus(`Found existing composite image for ${date}...`);
-        makePrediction(date);
-    }
-
-    compositeImageForPrediction.onerror = async () => {
-        updateStatus(`Generating composite image for ${date}...`);
-
-        const compositeImageData = await fetch(`http://localhost/sunset-quality-predictor/generateAndSaveCompositeImageBeforeSunset.php?date=${date}`);
-        const compositeImageResponse = await compositeImageData.json();
-
-        if (compositeImageResponse.success) {
-            updateStatus(`Successfully generated composite image for ${date}...`);
-
-            makePrediction(date);
-        }
     }
 }
 
@@ -150,10 +153,12 @@ function publishPrediction(data) {
 }
 
 async function postToInstagram(data) {
-    let { date, rating, confidence } = data;
+    let { date, rating, confidence, compositeImageURL } = data;
 
     let canvas = document.getElementById('image');
     let context = canvas.getContext('2d');
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
     context.font = '88px Helvetica Neue';
 
@@ -163,11 +168,19 @@ async function postToInstagram(data) {
     let lineheight = 128;
     let lines = text.split('\n');
 
-    for (var i = 0; i < lines.length; i++) {
+    const compositeImage = new Image();
+
+    compositeImage.onload = () => {
+        context.drawImage(compositeImage, 0, 460);
+    };
+
+    compositeImage.src = compositeImageURL;
+
+    for (let i = 0; i < lines.length; i++) {
         context.fillText(lines[i], x, y + (i * lineheight) );
     }
 
-    await fetch('http://localhost/sunset-quality-predictor/postToInstagram.php', {
+    await fetch('../postToInstagram.php', {
         method: 'POST',
         body: JSON.stringify({
             imageURL: canvas.toDataURL(),
@@ -202,7 +215,7 @@ function gatherDataForClass(filename, classNumber) {
             let imageAsTensor = tf.browser.fromPixels(image);
             let resizedTensorFrame = tf.image.resizeBilinear(
                 imageAsTensor,
-                [MOBILE_NET_INPUT_HEIGHT, MOBILE_NET_INPUT_WIDTH],
+                [MOBILE_NET_INPUT_SIZE, MOBILE_NET_INPUT_SIZE],
                 true
             );
             
@@ -235,7 +248,7 @@ async function loadMobileNetFeatureModel() {
     updateStatus('Sucessfully loaded MobileNet v3!');
 
     tf.tidy(function () {
-        let answer = mobilenet.predict(tf.zeros([1, MOBILE_NET_INPUT_HEIGHT, MOBILE_NET_INPUT_WIDTH, 3]));
+        let answer = mobilenet.predict(tf.zeros([1, MOBILE_NET_INPUT_SIZE, MOBILE_NET_INPUT_SIZE, 3]));
     });
 }
 

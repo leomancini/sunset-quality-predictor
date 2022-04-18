@@ -3,7 +3,7 @@
         global $CONFIG;
         
         $request = curl_init();
-        curl_setopt($request, CURLOPT_URL, "http://api.sunrise-sunset.org/json?lat=".$CONFIG['LOCATION']['LAT']."&lng=".$CONFIG['LOCATION']['LNG']."&date=".$date->format('Y-m-d'));
+        curl_setopt($request, CURLOPT_URL, "https://api.sunrise-sunset.org/json?lat=".$CONFIG['LOCATION']['LAT']."&lng=".$CONFIG['LOCATION']['LNG']."&date=".$date->format('Y-m-d'));
         curl_setopt($request, CURLOPT_RETURNTRANSFER, 1);
         $results = curl_exec($request);
         curl_close($request);
