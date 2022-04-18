@@ -51,6 +51,7 @@
     }
 
     function getUrl($file) {
+        // TODO: Save this on a remote server that's publically accessible
         $server = '';
         $directory = '/sunset-quality-predictor/';
 
