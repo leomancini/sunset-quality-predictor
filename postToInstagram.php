@@ -33,7 +33,8 @@
         curl_close($curl);
     }
 
-    function saveImage() {
+    function uploadImage() {
+        // TODO: Convert this to upload to cloud service
         global $input;
 
         $directory = './instagram/';
@@ -47,24 +48,14 @@
         
         file_put_contents($file, $data);
 
-        return $file;
-    }
-
-    function getUrl($file) {
-        // TODO: Save this on a remote server that's publically accessible
-        $server = '';
-        $directory = '/sunset-quality-predictor/';
-
-        $url = $server.$directory.$file;
+        $url = 'INSERT_SERVER_URL'.$file;
 
         return $url;
     }
 
     $input = json_decode(file_get_contents('php://input'), true);
 
-    $file = saveImage();
-    
-    $url = getUrl($file);
+    $url = uploadImage();
 
     $container = generateInstagramContainer(
         $url,

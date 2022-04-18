@@ -168,25 +168,27 @@ async function postToInstagram(data) {
     let lineheight = 128;
     let lines = text.split('\n');
 
-    const compositeImage = new Image();
-
-    compositeImage.onload = () => {
-        context.drawImage(compositeImage, 0, 460);
-    };
-
-    compositeImage.src = compositeImageURL;
-
     for (let i = 0; i < lines.length; i++) {
         context.fillText(lines[i], x, y + (i * lineheight) );
     }
 
-    await fetch('../postToInstagram.php', {
-        method: 'POST',
-        body: JSON.stringify({
-            imageURL: canvas.toDataURL(),
-            caption: text
-        })
-    });
+    const compositeImage = new Image();
+    compositeImage.src = compositeImageURL;
+
+    compositeImage.onload = async () => {
+        context.drawImage(compositeImage, 0, 460);
+
+        let request = await fetch('http://skyline.noshado.ws/instagram/post.php', {
+            method: 'POST',
+            body: JSON.stringify({
+                imageURL: canvas.toDataURL(),
+                caption: text
+            })
+        });
+        const response = await request.text();
+
+        console.log(response);
+    };
 }
 
 function logTrainingProgress(epoch, logs) {
