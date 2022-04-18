@@ -123,7 +123,7 @@ async function getCompositeImageAndMakePrediction() {
     compositeImageForPrediction.src = `../data/compositeImagesBeforeSunset/forPrediction/${date}.jpg`;
 
     updateStatus(`Checking for composite image for ${date}...`);
-        
+
     compositeImageForPrediction.onload = async () => {
         updateStatus(`Found existing composite image for ${date}...`);
         makePrediction(date);
@@ -145,7 +145,37 @@ async function getCompositeImageAndMakePrediction() {
 
 function publishPrediction(data) {
     console.log(data);
+
+    postToInstagram(data);
 }
+
+async function postToInstagram(data) {
+    let { date, rating, confidence } = data;
+
+    let canvas = document.getElementById('image');
+    let context = canvas.getContext('2d');
+
+    context.font = '88px Helvetica Neue';
+
+    let text = `Sunset on ${date}\npredicted to be ${rating} stars\nat a ${confidence}% confidence!`;
+    let x = 60;
+    let y = 140;
+    let lineheight = 128;
+    let lines = text.split('\n');
+
+    for (var i = 0; i < lines.length; i++) {
+        context.fillText(lines[i], x, y + (i * lineheight) );
+    }
+
+    await fetch('http://localhost/sunset-quality-predictor/postToInstagram.php', {
+        method: 'POST',
+        body: JSON.stringify({
+            imageURL: canvas.toDataURL(),
+            caption: text
+        })
+    });
+}
+
 
 function logTrainingProgress(epoch, logs) {
     updateStatus(`Epoch ${epoch}`);
