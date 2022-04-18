@@ -178,16 +178,17 @@ async function postToInstagram(data) {
     compositeImage.onload = async () => {
         context.drawImage(compositeImage, 0, 460);
 
-        let request = await fetch('http://skyline.noshado.ws/instagram/post.php', {
+        let uploadRequest = await fetch('../publish/proxy/upload.php', {
             method: 'POST',
             body: JSON.stringify({
                 imageURL: canvas.toDataURL(),
                 caption: text
             })
         });
-        const response = await request.text();
 
-        console.log(response);
+        const uploadResponse = await uploadRequest.json();
+
+        console.log(uploadResponse);
     };
 }
 
