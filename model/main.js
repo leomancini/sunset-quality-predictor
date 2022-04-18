@@ -189,7 +189,6 @@ async function postToInstagram(data) {
     });
 }
 
-
 function logTrainingProgress(epoch, logs) {
     updateStatus(`Epoch ${epoch}`);
 
