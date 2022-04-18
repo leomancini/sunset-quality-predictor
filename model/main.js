@@ -67,7 +67,14 @@ async function gatherData() {
 }
 
 async function getCompositeImageAndMakePrediction() {
-    let date = window.location.hash.split('#').join('');
+    let dateInput = window.location.hash.split('#').join('');
+    let date;
+
+    if (dateInput === 'today') {
+        date = new Date().toISOString().split('T')[0];
+    } else {
+        date = dateInput;
+    }
 
     const compositeImageForPrediction = new Image();
     const compositeImageURL = `${COMPOSITE_IMAGES_PATH}${date}.jpg`;
