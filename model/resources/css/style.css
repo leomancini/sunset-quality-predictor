@@ -1,6 +1,3 @@
-@mobile: ~"only screen and (max-width: 667px)";
-@desktop: ~"only screen and (min-width: 668px)";
-
 * {
     -webkit-font-smoothing: antialiased;
 }

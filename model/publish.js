@@ -1,3 +1,5 @@
+import { cleanDate } from './functions.js';
+
 async function loadSourceImages() {
     let loader = source => new Promise(resolve => {
         let image = new Image();
@@ -19,8 +21,7 @@ async function generateImage(sourceImages, data) {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    let dateComponents = date.split('-');
-    let dateParsed = new Date(`${dateComponents[1]}-${dateComponents[2]}-${dateComponents[0]}`);
+    let dateParsed = cleanDate(date).dateObject;
     let dateFormatted = dateParsed.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
     let text = `Sunset on\n${dateFormatted}\npredicted to be\n${rating} out of 5 stars\nat a ${confidence}% confidence!`;
@@ -52,6 +53,17 @@ async function generateImage(sourceImages, data) {
     return imageData;
 }
 
+async function saveHistory(data) {
+    let request = await fetch('../publish/proxy/saveHistory.php', {
+        method: 'POST',
+        body: JSON.stringify(data)
+    });
+
+    const response = await request.json();
+
+    console.log(response);
+}
+
 async function postToDestination(params) {
     if (params.destination === 'instagram') {
         let { imageData, caption } = params.data;
@@ -79,5 +91,7 @@ export async function publishPrediction(data) {
             },
 
         });
+
+        await saveHistory(data);
     }).catch(console.error);
 }
