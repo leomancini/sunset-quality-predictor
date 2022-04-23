@@ -153,11 +153,11 @@ async function saveHistory(data) {
 
 async function postToDestination(params) {
     if (params.destination === 'instagram') {
-        let { imageData, caption } = params.data;
+        let { imageData, caption, date } = params.data;
 
         let uploadRequest = await fetch('../publish/proxy/instagram.php', {
             method: 'POST',
-            body: JSON.stringify({ imageData, caption })
+            body: JSON.stringify({ imageData, caption, date })
         });
 
         const uploadResponse = await uploadRequest.json();
@@ -188,7 +188,8 @@ export async function publishPrediction(data) {
             destination: 'instagram',
             data: { 
                 imageData,
-                caption
+                caption,
+                date: data.date
             }
         });
 
