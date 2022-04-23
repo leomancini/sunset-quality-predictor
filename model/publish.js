@@ -1,15 +1,15 @@
 import { cleanDate } from './functions.js';
 
-async function loadSourceImages() {
+async function loadSourceImages(data) {
     let loader = source => new Promise(resolve => {
         let image = new Image();
         image.src = source;
         image.onload = e => resolve(image);
         image.src = image.src;
     });
-
+    
     return {
-        backgroundImage: await loader('../publish/resources/instagram/background.png')
+        backgroundImage: await loader(`../publish/resources/instagram/background-${data.rating}.png`)
     }
 };
 
@@ -22,31 +22,45 @@ async function generateImage(sourceImages, data) {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     let dateParsed = cleanDate(date).dateObject;
-    let dateFormatted = dateParsed.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    let dateFormatted = {
+        dayOfWeek: dateParsed.toLocaleDateString('en-US', { weekday: 'long' }),
+        date: dateParsed.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
+    }
 
-    let text = `Sunset on\n${dateFormatted}\npredicted to be\n${rating} out of 5 stars\nat a ${confidence}% confidence!`;
+    let text = `${dateFormatted.dayOfWeek}\n${dateFormatted.date}`;
 
+    let scale = 2;
+    
     context.drawImage(sourceImages.backgroundImage, 0, 0);
 
-    context.font = 'bold 84px Helvetica Neue';
-    context.globalCompositeOperation = 'overlay';
-    context.fillStyle = 'black';
+    context.font = `bold ${64 * scale}px Inter V`;
+    context.shadowOffsetX = 0 * scale;
+    context.shadowOffsetY = 4 * scale;
+    context.shadowColor = 'rgba(0, 0, 0, 0.15)';
+    context.shadowBlur = 20 * scale;
+    context.fillStyle = 'white';
 
-    let x = 60;
-    let y = 140;
-    let lineheight = 108;
+    let x = 40 * scale;
+    let y = 172 * scale;
+    let lineheight = 78 * scale;
     let lines = text.split('\n');
 
-    for (let i = 0; i < lines.length; i++) {
-        if (i === 3) {
-            context.fillStyle = 'white';
-            context.fillText(lines[i], x, y + (i * lineheight));
-            context.fillStyle = 'black';
-        } else {       
-            context.fillText(lines[i], x, y + (i * lineheight));
-            context.fillText(lines[i], x, y + (i * lineheight));
-        }
+    for (let i = 0; i < lines.length; i++) {    
+        context.fillText(lines[i], x, y + (i * lineheight));
     }
+    
+    context.globalCompositeOperation = 'overlay';
+    context.font = `600 ${18 * scale}px Inter V`;
+    context.fillStyle = 'black';
+    
+    x = 40 * scale;
+    y = 506 * scale;
+    
+    const zeroPad = (num, places) => String(num).padStart(places, '0');
+    
+    let confidenceWithLeadingZeros = zeroPad(confidence, 2);
+    
+    context.fillText(`${String(confidenceWithLeadingZeros).charAt(0)} ${String(confidenceWithLeadingZeros).charAt(1)} %  C O N F I D E N T`, x, y);
 
     let imageData = canvas.toDataURL();
 
@@ -80,17 +94,17 @@ async function postToDestination(params) {
 }
 
 export async function publishPrediction(data) {
-    loadSourceImages().then(async (sourceImages) =>  {
+    loadSourceImages(data).then(async (sourceImages) =>  {
         let imageData = await generateImage(sourceImages, data);
 
-        await postToDestination({
-            destination: 'instagram',
-            data: { 
-                imageData,
-                caption: 'text'
-            }
-        });
-
-        await saveHistory(data);
+//         await postToDestination({
+//             destination: 'instagram',
+//             data: { 
+//                 imageData,
+//                 caption: 'text'
+//             }
+//         });
+// 
+//         await saveHistory(data);
     }).catch(console.error);
 }
