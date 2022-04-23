@@ -40,26 +40,26 @@ let trainingDataInputs = [];
 let trainingDataOutputs = [];
 let examplesCount = [];
 
-// await loadMobileNetFeatureModel();
-// 
-// model = tf.sequential();
-// model.add(tf.layers.dense({ inputShape: [1024], units: 128, activation: 'relu' }));
-// model.add(tf.layers.dense({ units: CLASS_NAMES.length, activation: 'softmax' }));
-// model.summary();
-// model.compile({
-//     optimizer: 'adam',
-//     loss: 'categoricalCrossentropy',
-//     metrics: [ 'accuracy' ],
-// });
+await loadMobileNetFeatureModel();
+
+model = tf.sequential();
+model.add(tf.layers.dense({ inputShape: [1024], units: 128, activation: 'relu' }));
+model.add(tf.layers.dense({ units: CLASS_NAMES.length, activation: 'softmax' }));
+model.summary();
+model.compile({
+    optimizer: 'adam',
+    loss: 'categoricalCrossentropy',
+    metrics: [ 'accuracy' ],
+});
 
 if (!TRAINING_PAGE) {
     if (window.location.hash) {
-        // makePrediction();
-        await publishPrediction({
-            date: window.location.hash.split('#')[1],
-            rating: 1,
-            confidence: 99
-        });
+        makePrediction();
+        // await publishPrediction({
+        //     date: window.location.hash.split('#')[1],
+        //     rating: 1,
+        //     confidence: 99
+        // });
     } else {
         updateStatus('No date specified!')
     }
