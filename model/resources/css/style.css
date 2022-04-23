@@ -1,3 +1,5 @@
+@import url('https://rsms.me/inter/inter.css');
+
 * {
     -webkit-font-smoothing: antialiased;
 }
@@ -15,4 +17,17 @@ button {
 
 #status {
     font-size: 150%;
+}
+
+.fontLoader {
+    display:  inline-block;
+    font-family: 'Inter';
+}
+
+.fontLoader#weightBold {
+    font-weight: bold;
+}
+
+.fontLoader#weight600 {
+    font-weight: 600;
 }

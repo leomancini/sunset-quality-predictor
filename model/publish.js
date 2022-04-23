@@ -59,7 +59,7 @@ async function generateImage(sourceImages, dateFormatted, data) {
         attributes: {
             blendingMode: 'overlay',
             font: {
-                family: 'Inter V',
+                family: 'Inter',
                 weight: '600',
                 size: 18,
                 lineHeight: 0,
@@ -84,7 +84,7 @@ async function generateImage(sourceImages, dateFormatted, data) {
         attributes: {
             blendingMode: 'normal',
             font: {
-                family: 'Inter V',
+                family: 'Inter',
                 weight: 'bold',
                 size: 64,
                 lineHeight: 78,
@@ -120,7 +120,7 @@ async function generateImage(sourceImages, dateFormatted, data) {
         attributes: {
             blendingMode: 'overlay',
             font: {
-                family: 'Inter V',
+                family: 'Inter',
                 weight: '600',
                 size: 18,
                 lineHeight: 0,
