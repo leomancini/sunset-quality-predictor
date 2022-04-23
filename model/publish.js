@@ -88,8 +88,7 @@ export async function publishPrediction(data) {
             data: { 
                 imageData,
                 caption: 'text'
-            },
-
+            }
         });
 
         await saveHistory(data);
