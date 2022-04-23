@@ -52,8 +52,12 @@ model.compile({
     metrics: [ 'accuracy' ],
 });
 
-if (!TRAINING_PAGE && window.location.hash) {
-    makePrediction();
+if (!TRAINING_PAGE) {
+    if (window.location.hash) {
+        makePrediction();
+    } else {
+        updateStatus('No date specified!')
+    }
 }
 
 window.addEventListener('hashchange', function() {
