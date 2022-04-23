@@ -55,11 +55,6 @@ model.compile({
 if (!TRAINING_PAGE) {
     if (window.location.hash) {
         makePrediction();
-        // await publishPrediction({
-        //     date: window.location.hash.split('#')[1],
-        //     rating: 1,
-        //     confidence: 99
-        // });
     } else {
         updateStatus('No date specified!')
     }
