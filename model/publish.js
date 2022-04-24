@@ -155,7 +155,7 @@ async function postToDestination(params) {
     if (params.destination === 'instagram') {
         let { imageData, caption, date } = params.data;
 
-        let uploadRequest = await fetch('../publish/proxy/instagram.php', {
+        let uploadRequest = await fetch('../publish/proxy/postPredictionToInstagram.php', {
             method: 'POST',
             body: JSON.stringify({ imageData, caption, date })
         });

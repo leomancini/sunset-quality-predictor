@@ -8,7 +8,7 @@
 
     $curl = curl_init();
 
-    curl_setopt($curl, CURLOPT_URL, $SECRETS['PUBLISH_SERVER_URL'].'instagram/post.php');
+    curl_setopt($curl, CURLOPT_URL, $SECRETS['PUBLISH_SERVER_URL'].'instagram/postPrediction.php');
     curl_setopt($curl, CURLOPT_FAILONERROR, true);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_POST, true);
