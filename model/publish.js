@@ -50,11 +50,11 @@ async function generateImage(sourceImages, dateFormatted, data) {
 
     drawText(context, {
         scale,
-        text: `S U N S E T  Q U A L I T Y  P R E D I C T I O N`,
+        text: `S U N S E T    Q U A L I T Y    P R E D I C T I O N`,
         doubleDraw: true,
         position: {
-            x: 100,
-            y: 60
+            x: 104,
+            y: 59
         },
         attributes: {
             blendingMode: 'overlay',
@@ -111,7 +111,7 @@ async function generateImage(sourceImages, dateFormatted, data) {
 
     drawText(context, {
         scale,
-        text: `${String(confidenceWithLeadingZeros).charAt(0)} ${String(confidenceWithLeadingZeros).charAt(1)} %  C O N F I D E N T`,
+        text: `${String(confidenceWithLeadingZeros).charAt(0)} ${String(confidenceWithLeadingZeros).charAt(1)} %    C O N F I D E N T`,
         doubleDraw: doubleDrawConfidenceLabel,
         position: {
             x: 40,
@@ -184,15 +184,15 @@ export async function publishPrediction(data) {
         let imageData = await generateImage(sourceImages, dateFormatted, data);
         let caption = generateCaption(dateFormatted, data);
 
-        await postToDestination({
-            destination: 'instagram',
-            data: { 
-                imageData,
-                caption,
-                date: data.date
-            }
-        });
+        // await postToDestination({
+        //     destination: 'instagram',
+        //     data: { 
+        //         imageData,
+        //         caption,
+        //         date: data.date
+        //     }
+        // });
 
-        await saveHistory(data);
+        // await saveHistory(data);
     }).catch(console.error);
 }
