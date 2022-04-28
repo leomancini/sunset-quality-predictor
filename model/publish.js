@@ -166,10 +166,30 @@ async function postToDestination(params) {
     }
 }
 
-function generateCaption(dateFormatted, data) {
-    let caption = `The visual quality of the sunset on ${dateFormatted.dayOfWeek}, ${dateFormatted.date}, ${dateFormatted.year} is predicted to be ${data.rating} out of 5 stars, with a confidence of ${data.confidence}%.`;
+async function getSunsetTime(date) {
+    const sunsetTimeRequest = await fetch(`http://skyline.noshado.ws/sunset-api-proxy/getSunsetTime.php?lat=40.730610&lng=-73.935242&date=${date}&timezone=ET`);
+    const sunsetTimeData = await sunsetTimeRequest.json();
 
-    return caption;
+    const sunsetTime = new Date(sunsetTimeData.timestamp * 1000);
+    const sunsetTimeFormatted = sunsetTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' });
+    
+    return {
+        dateObject: sunsetTime,
+        formatted: sunsetTimeFormatted
+    };
+}
+
+async function generateCaption(dateFormatted, data) {
+    let sunsetTime = await getSunsetTime(data.date);
+
+    let captions = [
+        `${sunsetTime.formatted} The visual quality of the sunset on ${dateFormatted.dayOfWeek}, ${dateFormatted.date}, ${dateFormatted.year} is predicted to be ${data.rating} out of 5 stars, with a confidence of ${data.confidence}%.`,
+        `${sunsetTime.formatted} OK`
+    ];
+
+    let randomCaptionIndex = Math.floor(Math.random() * captions.length);
+
+    return captions[randomCaptionIndex];
 }
 
 export async function publishPrediction(data) {
@@ -182,7 +202,7 @@ export async function publishPrediction(data) {
         }
 
         let imageData = await generateImage(sourceImages, dateFormatted, data);
-        let caption = generateCaption(dateFormatted, data);
+        let caption = await generateCaption(dateFormatted, data);
 
         await postToDestination({
             destination: 'instagram',
