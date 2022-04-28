@@ -98,16 +98,3 @@ async function getPredictionFromModel(date, compositeImageURL) {
         });
     }
 }
-
-async function loadSourceImages() {
-    let loader = source => new Promise(resolve => {
-        let image = new Image();
-        image.src = source;
-        image.onload = e => resolve(image);
-        image.src = image.src;
-    });
-
-    return {
-        backgroundImage: await loader('../publish/resources/instagram/background.png')
-    }
-}
