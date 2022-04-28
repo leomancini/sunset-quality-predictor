@@ -183,8 +183,8 @@ async function generateCaption(dateFormatted, data) {
     let sunsetTime = await getSunsetTime(data.date);
 
     let captions = [
-        `${sunsetTime.formatted} The visual quality of the sunset on ${dateFormatted.dayOfWeek}, ${dateFormatted.date}, ${dateFormatted.year} is predicted to be ${data.rating} out of 5 stars, with a confidence of ${data.confidence}%.`,
-        `${sunsetTime.formatted} OK`
+        `I predict the quality of the sunset on ${dateFormatted.dayOfWeek}, ${dateFormatted.date}, ${dateFormatted.year} is going to be ${data.rating} out of 5 stars. I'm ${data.confidence}% confident, but we'll see at ${sunsetTime.formatted}!`,
+        `The sunset is going to happen today at ${sunsetTime.formatted} and I'm ${data.confidence}% sure that it is going to be a ${data.rating}-star sunset.`
     ];
 
     let randomCaptionIndex = Math.floor(Math.random() * captions.length);
