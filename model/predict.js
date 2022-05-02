@@ -44,7 +44,7 @@ export async function makePrediction() {
 
 async function getPredictionFromModel(date, compositeImageURL) {
     const SAVED_MODELS_URL = 'http://localhost/sunset-quality-predictor/model/savedModels/';
-    const LATEST_MODEL = 'sunsetQualityPreidctorModel-2022-04-16T14-34-32-344Z.json';
+    const LATEST_MODEL = 'sunsetQualityPreidctorModel-2022-05-02T14-37-56-132Z-50-epochs.json';
 
     try {
         updateStatus('Loading model...');
