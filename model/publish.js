@@ -204,15 +204,15 @@ export async function publishPrediction(data) {
         let imageData = await generateImage(sourceImages, dateFormatted, data);
         let caption = await generateCaption(dateFormatted, data);
 
-        await postToDestination({
-            destination: 'instagram',
-            data: { 
-                imageData,
-                caption,
-                date: data.date
-            }
-        });
+        // await postToDestination({
+        //     destination: 'instagram',
+        //     data: { 
+        //         imageData,
+        //         caption,
+        //         date: data.date
+        //     }
+        // });
 
-        await saveHistory(data);
+        // await saveHistory(data);
     }).catch(console.error);
 }

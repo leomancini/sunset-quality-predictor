@@ -8,15 +8,15 @@ import { updateStatus } from './functions.js';
 export async function trainAndSaveModel() {
     updateStatus('Training model...');
 
-    tf.util.shuffleCombo(trainingDataInputs, trainingDataOutputs);
-    let outputsAsTensor = tf.tensor1d(trainingDataOutputs, 'int32');
+    tf.util.shuffleCombo(window.trainingDataInputs, window.trainingDataOutputs);
+    let outputsAsTensor = tf.tensor1d(window.trainingDataOutputs, 'int32');
     let oneHotOutputs = tf.oneHot(outputsAsTensor, CLASS_NAMES.length);
-    let inputsAsTensor = tf.stack(trainingDataInputs);
+    let inputsAsTensor = tf.stack(window.trainingDataInputs);
 
-    await model.fit(inputsAsTensor, oneHotOutputs, {
+    await window.model.fit(inputsAsTensor, oneHotOutputs, {
         shuffle: true,
         batchSize: 5,
-        epochs: 10,
+        epochs: 50,
         callbacks: { onEpochEnd: logTrainingProgress },
     });
 
@@ -61,7 +61,7 @@ async function saveModel() {
     let today = new Date();
     let timestamp = today.toISOString().split(':').join('-').split('.').join('-');
 
-    await model.save(`downloads://sunsetQualityPreidctorModel-${timestamp}`);
+    await window.model.save(`downloads://sunsetQualityPreidctorModel-${timestamp}`);
 
     updateStatus('Model trained and saved! Ready to use!');
 }
@@ -85,18 +85,18 @@ function gatherDataForClass(filename, classNumber) {
                 .squeeze();
         });
 
-        trainingDataInputs.push(imageFeatures);
-        trainingDataOutputs.push(classNumber);
+        window.trainingDataInputs.push(imageFeatures);
+        window.trainingDataOutputs.push(classNumber);
 
-        if (examplesCount[classNumber] === undefined) {
-            examplesCount[classNumber] = 0;
+        if (window.examplesCount[classNumber] === undefined) {
+            window.examplesCount[classNumber] = 0;
         }
-        examplesCount[classNumber]++;
+        window.examplesCount[classNumber]++;
 
         updateStatus('');
 
         for (let n = 0; n < CLASS_NAMES.length; n++) {
-            updateStatus(CLASS_NAMES[n] + ' data count: ' + examplesCount[n] + '. ');
+            updateStatus('Rating ' + CLASS_NAMES[n] + ' data count: ' + window.examplesCount[n]);
         }
     };
 }

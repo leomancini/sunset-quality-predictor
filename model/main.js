@@ -1,6 +1,7 @@
 import { publishPrediction } from './publish.js';
 import { makePrediction } from './predict.js';
 import { trainAndSaveModel } from './train.js';
+import { gatherData } from './train.js';
 
 import {
     MOBILE_NET_INPUT_SIZE,
@@ -35,18 +36,17 @@ async function loadMobileNetFeatureModel() {
     });
 }
 
-let model;
-let trainingDataInputs = [];
-let trainingDataOutputs = [];
-let examplesCount = [];
+window.trainingDataInputs = [];
+window.trainingDataOutputs = [];
+window.examplesCount = [];
 
 await loadMobileNetFeatureModel();
 
-model = tf.sequential();
-model.add(tf.layers.dense({ inputShape: [1024], units: 128, activation: 'relu' }));
-model.add(tf.layers.dense({ units: CLASS_NAMES.length, activation: 'softmax' }));
-model.summary();
-model.compile({
+window.model = tf.sequential();
+window.model.add(tf.layers.dense({ inputShape: [1024], units: 128, activation: 'relu' }));
+window.model.add(tf.layers.dense({ units: CLASS_NAMES.length, activation: 'softmax' }));
+window.model.summary();
+window.model.compile({
     optimizer: 'adam',
     loss: 'categoricalCrossentropy',
     metrics: [ 'accuracy' ],
