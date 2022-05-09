@@ -13,7 +13,7 @@
         }
 
         $sunsetTime = getSunsetTime($date);
-        $midnightTime = new DateTime($date->format('Y-m-d')." 01:00");
+        $midnightTime = new DateTime($date->format('Y-m-d')." 00:00");
         $interval = DateInterval::createFromDateString($interval);
 
         if ($options['OFFSET_FROM_SUNSET']) {
