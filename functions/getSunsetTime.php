@@ -11,9 +11,9 @@
     
         $sunData = json_decode($results)->results;
     
-        $dateSunsetTimeUTC = new DateTime($date->format('Y-m-d')." ".$sunData->sunset, new DateTimeZone('UTC'));
+        $dateSunsetTimeUTC = new DateTime($sunData->sunset, new DateTimeZone('UTC'));
         $dateSunsetTimeUTC->setTimezone(new DateTimeZone($CONFIG['TIMEZONE']));
-        $dateSunsetTimeET = new DateTime($dateSunsetTimeUTC->format('Y-m-d')." ".$dateSunsetTimeUTC->format('H:i'));
+        $dateSunsetTimeET = new DateTime($dateSunsetTimeUTC->format('Y-m-d H:i'));
 
         return $dateSunsetTimeET;
     }

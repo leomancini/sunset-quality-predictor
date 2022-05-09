@@ -82,12 +82,12 @@ async function getPredictionFromModel(date, compositeImageURL) {
 
                 updateStatus(`Sunset on ${date} predicted to be <b>${predictionResult.rating} stars</b> at a ${predictionResult.confidence}% confidence!`);
 
-                await publishPrediction({
-                    date,
-                    rating: parseInt(CLASS_NAMES[highestIndex]),
-                    confidence: Math.floor(predictionArray[highestIndex] * 100),
-                    compositeImageURL
-                });
+                // await publishPrediction({
+                //     date,
+                //     rating: parseInt(CLASS_NAMES[highestIndex]),
+                //     confidence: Math.floor(predictionArray[highestIndex] * 100),
+                //     compositeImageURL
+                // });
 
                 console.log(`http://skyline.noshado.ws/view-sunset/viewer.html#${date}`)
             };

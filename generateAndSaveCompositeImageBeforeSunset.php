@@ -16,7 +16,7 @@
             'CHECK_EXISTS' => 'REMOTE',
             'LIMIT' => ((60 / 10) * 21)
         ]);
-        
+
         generateCompositeGridImage($srcImagePaths, [
             'SAVE_AS_FILE' => true,
             'DIRECTORY' => 'data/compositeImagesBeforeSunset/forPrediction/',
