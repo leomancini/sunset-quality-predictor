@@ -7,12 +7,25 @@ import {
 import { updateStatus } from './functions.js';
 import { publishPrediction } from './publish.js';;
 
+function formatDate(date) {
+    let yyyy = date.getFullYear().toString();
+    let mm = (date.getMonth()+1).toString();
+    let dd  = date.getDate().toString();
+
+    let mmChars = mm.split('');
+    let ddChars = dd.split('');
+
+    return yyyy + '-' + (mmChars[1]?mm:"0"+mmChars[0]) + '-' + (ddChars[1]?dd:"0"+ddChars[0]);
+}
+
 export async function makePrediction() {
     let dateInput = window.location.hash.split('#').join('');
     let date;
 
     if (dateInput === 'today') {
-        date = new Date().toISOString().split('T')[0];
+        let today = new Date();
+
+        date = formatDate(today);
     } else {
         date = dateInput;
     }
