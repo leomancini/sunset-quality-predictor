@@ -2,7 +2,7 @@
     $relativePath = '../';
     require($relativePath.'config.php');
 
-    // if ($_GET['password'] !== $SECRETS['PROTECTED_CODE_PASSWORD']) { exit(); }
+    if ($_GET['password'] !== $SECRETS['PROTECTED_CODE_PASSWORD']) { exit(); }
 
     require('./generateAverageRatings.php');
 
