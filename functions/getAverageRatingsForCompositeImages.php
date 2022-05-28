@@ -9,7 +9,6 @@
     $airtableAuthToken = $SECRETS['AIRTABLE_API_KEY'];
     $allRecords = [];
 
-    
     $ratings = generateAverageRatings();
     
     $sunsetsWithRatings = [];
