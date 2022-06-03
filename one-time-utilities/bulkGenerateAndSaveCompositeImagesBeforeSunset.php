@@ -11,17 +11,17 @@
     require($relativePath.'functions/generateAvailableDates.php');
 
     $dates = generateAvailableDates([
-        'FIRST_DATE' => '2022-03-22',
-        'LAST_DATE' => '2022-04-02'
+        'FIRST_DATE' => '2021-12-17',
+        'LAST_DATE' => '2022-03-21'
     ]);
 
     foreach ($dates as &$dateInput) {
         $date = new DateTime($dateInput);
 
-        $srcImagePaths = getTimesFromMidnightToSunset($date, [
-            'OFFSET_FROM_SUNSET' => '-1 hour',
-            'INTERVAL' => '10 minutes',
-            'RELATIVE_PATH' => $relativePath,
+        $srcImagePaths = getTimesFromStartToSunset($date, [
+            'END_TIME_OFFSET_FROM_SUNSET' => '-1 hour',
+            'START_TIME_OFFSET_FROM_SUNSET' => '-4 hours',
+            'INTERVAL' => '5 minutes',
             'FILENAME' => true,
             'CHECK_EXISTS' => 'REMOTE',
             'LIMIT' => ((60 / 10) * 21)
@@ -29,11 +29,11 @@
         
         generateCompositeGridImage($srcImagePaths, [
             'SAVE_AS_FILE' => true,
-            'DIRECTORY' => '../data/compositeImagesBeforeSunset/',
+            'DIRECTORY' => '../data/compositeImagesBeforeSunset/ratedSunsets_v2/',
             'FILENAME' => $date->format('Y-m-d'),
-            'GRID_SIZE' => 8
+            'GRID_SIZE' => 5
         ]);
     
-        echo 'Successfully generated composite image for '.$date->format('F j, Y').' and saved to data/compositeImagesBeforeSunset/'.$date->format('Y-m-d').'.jpg<br>';    
+        echo 'Successfully generated and saved composite image for '.$date->format('F j, Y').'<br>';    
     }
 ?>

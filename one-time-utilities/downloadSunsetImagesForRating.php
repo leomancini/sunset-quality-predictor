@@ -52,7 +52,8 @@
     }
 
     $availableDates = generateAvailableDates([
-        'LAST_DATE' => '2022-03-21'
+        'FIRST_DATE' => '2022-03-22',
+        'LAST_DATE' => '2022-06-01'
     ]);
 
     foreach ($availableDates as $availableDate) {

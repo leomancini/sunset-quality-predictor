@@ -6,7 +6,7 @@
         $dateInput = $_GET['date'];
         $date = new DateTime($dateInput);
     
-        $srcImagePaths = getTimesFromMidnightToSunset($date, ['FILENAME' => true, 'CHECK_EXISTS' => true, 'LIMIT' => 8 * 8]);
+        $srcImagePaths = getTimesFromStartToSunset($date, ['FILENAME' => true, 'CHECK_EXISTS' => true, 'LIMIT' => 8 * 8]);
     
         header('Content-type: image/jpeg');
         

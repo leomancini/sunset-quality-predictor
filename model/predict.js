@@ -46,7 +46,7 @@ export async function makePrediction() {
 
 async function getPredictionFromModel(date, compositeImageURL) {
     const SAVED_MODELS_URL = 'http://localhost/sunset-quality-predictor/model/savedModels/';
-    const LATEST_MODEL = 'sunsetQualityPreidctorModel-2022-05-02T14-37-56-132Z-50-epochs.json';
+    const LATEST_MODEL = 'sunsetQualityPreidctorModel-2022-06-03T00-08-43-013Z.json';
 
     try {
         updateStatus('Loading model...');
@@ -84,12 +84,12 @@ async function getPredictionFromModel(date, compositeImageURL) {
 
                 updateStatus(`Sunset on ${date} predicted to be <b>${predictionResult.rating} stars</b> at a ${predictionResult.confidence}% confidence!`);
 
-                await publishPrediction({
-                    date,
-                    rating: parseInt(CLASS_NAMES[highestIndex]),
-                    confidence: Math.floor(predictionArray[highestIndex] * 100),
-                    compositeImageURL
-                });
+                // await publishPrediction({
+                //     date,
+                //     rating: parseInt(CLASS_NAMES[highestIndex]),
+                //     confidence: Math.floor(predictionArray[highestIndex] * 100),
+                //     compositeImageURL
+                // });
 
                 console.log(`http://skyline.noshado.ws/view-sunset/viewer.html#${date}`)
             };

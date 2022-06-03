@@ -1,5 +1,5 @@
 async function getAvailableDates() {
-    let lastDateDownloaded = '2022-03-21';
+    let lastDateDownloaded = '2022-06-01';
     let response = await fetch(`../getAvailableDates.php?last_date=${lastDateDownloaded}`);
     let data = await response.json();
 
@@ -18,6 +18,27 @@ async function showImagesForRandomDate() {
 
         // Debug - to look at a specific date
         // showAnimatedAndGridImagesForDate('2021-12-26');
+    } else {
+        loadingSpinner.classList.add('loaded');
+
+        document.querySelector('#animatedImages').classList.remove('visible');
+        document.querySelector('#gridImages').classList.remove('visible');
+        
+        setTimeout(function() {
+            alert("Nice! You've rated all the available sunsets! Refresh to rate again or wait for the sun to set again to see new images.");
+        }, 500);
+    }
+}
+
+async function showImagesForNextDate() {
+    if (window.data.availableDates.length > 0) {
+        let nextAvailableDate = window.data.availableDates[window.data.currentIndex + 1];
+    
+        window.data.availableDates = window.data.availableDates.filter(function(value) {
+            return value !== nextAvailableDate;
+        });
+    
+        showAnimatedAndGridImagesForDate(nextAvailableDate);
     } else {
         loadingSpinner.classList.add('loaded');
 
@@ -60,7 +81,7 @@ async function handleStarRating() {
 
             await saveRating(clickedRating);
 
-            showImagesForRandomDate();
+            showImagesForNextDate();
 
             starsContainer.classList.remove('interactive');
 

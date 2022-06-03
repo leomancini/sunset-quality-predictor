@@ -9,10 +9,11 @@ window.data = {
 async function load() {
     observeImagesContainerHeight();
 
+    window.data.currentIndex = 108;
     window.data.availableDates = await getAvailableDates();
     
     hideCurrentImage();
-    await showImagesForRandomDate();
+    await showImagesForNextDate();
 
     handleOptionSwitcher();
     handleStarRating();

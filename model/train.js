@@ -68,7 +68,7 @@ async function saveModel() {
 
 function gatherDataForClass(filename, classNumber) {
     const image = new Image();
-    image.src = `trainingData/${filename}.jpg`;
+    image.src = `trainingData/4HoursBeforeTo1HourBefore/${filename}.jpg`;
     image.onload = () => {
         let imageFeatures = tf.tidy(function () {
             let imageAsTensor = tf.browser.fromPixels(image);

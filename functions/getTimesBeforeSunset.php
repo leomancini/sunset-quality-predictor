@@ -3,7 +3,7 @@
     require($relativePath.'functions/getSunsetTime.php');
     require($relativePath.'functions/addToArray.php');
 
-    function getTimesFromMidnightToSunset($date, $options) {
+    function getTimesFromStartToSunset($date, $options) {
         global $CONFIG;
 
         if ($options['INTERVAL']) {
@@ -13,41 +13,46 @@
         }
 
         $sunsetTime = getSunsetTime($date);
-        $midnightTime = new DateTime($date->format('Y-m-d')." 00:00");
         $interval = DateInterval::createFromDateString($interval);
 
-        if ($options['OFFSET_FROM_SUNSET']) {
-            $timeBeforeSunsetTime = new DateTime($sunsetTime->format("Y-m-d H:i").' '.$options['OFFSET_FROM_SUNSET']);
-            $period = new DatePeriod($midnightTime, $interval, $timeBeforeSunsetTime);
+       if ($options['START_TIME_OFFSET_FROM_SUNSET']) {
+            $startTime = new DateTime($sunsetTime->format("Y-m-d H:i").' '.$options['START_TIME_OFFSET_FROM_SUNSET']);
         } else {
-            $period = new DatePeriod($midnightTime, $interval, $sunsetTime);
+            $startTime = new DateTime($date->format('Y-m-d')." 00:00");
+        }
+
+        if ($options['END_TIME_OFFSET_FROM_SUNSET']) {
+            $timeBeforeSunsetTime = new DateTime($sunsetTime->format("Y-m-d H:i").' '.$options['END_TIME_OFFSET_FROM_SUNSET']);
+            $period = new DatePeriod($startTime, $interval, $timeBeforeSunsetTime);
+        } else {
+            $period = new DatePeriod($startTime, $interval, $sunsetTime);
         }
     
-        $allTimesFromMidnightToSunset = Array();
+        $allTimesFromStartToSunset = Array();
     
         foreach ($period as $minute) {
-            array_push($allTimesFromMidnightToSunset, $minute);
+            array_push($allTimesFromStartToSunset, $minute);
         }
 
-        $allTimesFromMidnightToSunset = array_reverse($allTimesFromMidnightToSunset); // Sort by reverse chronological
+        $allTimesFromStartToSunset = array_reverse($allTimesFromStartToSunset); // Sort by reverse chronological
 
-        $timesFromMidnightToSunset = Array();
+        $timesFromStartToSunset = Array();
         $index = 0;
 
-        foreach ($allTimesFromMidnightToSunset as $minute) {
+        foreach ($allTimesFromStartToSunset as $minute) {
             $minuteFormatted = $minute->format("Y-m-d-H-i");
     
             if ($options['LIMIT']) {
                 if ($index < $options['LIMIT']) {
-                    addToArray($options, $minuteFormatted, $timesFromMidnightToSunset);
+                    addToArray($options, $minuteFormatted, $timesFromStartToSunset);
                 }
             } else {
-                addToArray($options, $minuteFormatted, $timesFromMidnightToSunset);
+                addToArray($options, $minuteFormatted, $timesFromStartToSunset);
             }
 
             $index++;
         }
 
-        return $timesFromMidnightToSunset;
+        return $timesFromStartToSunset;
     }
 ?>

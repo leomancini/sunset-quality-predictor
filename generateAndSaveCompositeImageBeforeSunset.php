@@ -9,9 +9,10 @@
         $dateInput = $_GET['date'];
         $date = new DateTime($dateInput);
 
-        $srcImagePaths = getTimesFromMidnightToSunset($date, [
-            'OFFSET_FROM_SUNSET' => '-1 hour',
-            'INTERVAL' => '10 minutes',
+        $srcImagePaths = getTimesFromStartToSunset($date, [
+            'END_TIME_OFFSET_FROM_SUNSET' => '-1 hour',
+            'START_TIME_OFFSET_FROM_SUNSET' => '-4 hours',
+            'INTERVAL' => '5 minutes',
             'FILENAME' => true,
             'CHECK_EXISTS' => 'REMOTE',
             'LIMIT' => ((60 / 10) * 21)
@@ -21,7 +22,7 @@
             'SAVE_AS_FILE' => true,
             'DIRECTORY' => 'data/compositeImagesBeforeSunset/forPrediction/',
             'FILENAME' => $date->format('Y-m-d'),
-            'GRID_SIZE' => 8
+            'GRID_SIZE' => 5
         ]);
 
         echo json_encode(['success' => true]);
