@@ -167,7 +167,7 @@ async function postToDestination(params) {
 }
 
 async function getSunsetTime(date) {
-    const sunsetTimeRequest = await fetch(`http://skyline.noshado.ws/sunset-api-proxy/getSunsetTime.php?lat=40.730610&lng=-73.935242&date=${date}&timezone=ET`);
+    const sunsetTimeRequest = await fetch(`http://skyline.noshado.ws/sunset-api-proxy/getSunsetTime.php?date=${date}&timezone=ET`);
     const sunsetTimeData = await sunsetTimeRequest.json();
 
     const sunsetTime = new Date(sunsetTimeData.timestamp * 1000);
